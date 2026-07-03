@@ -63,10 +63,7 @@ input, button {
 
 <script>
 
-const cardImg = document.getElementById("cardImg");
-const cooldown = document.getElementById("cooldown");
-const inventory = document.getElementById("inventory");
-const objectives = document.getElementById("objectives");
+
 
 // 🔥 CONFIG FIREBASE (REMPLACE ICI)
 
@@ -124,11 +121,17 @@ function logout() {
 
 // 👤 USER STATE
 auth.onAuthStateChanged(async user => {
+
+    const authDiv = document.getElementById("auth");
+    const gameDiv = document.getElementById("game");
+
+    if (!authDiv || !gameDiv) return;
+
     if (user) {
         currentUser = user;
 
-        document.getElementById("auth").style.display = "none";
-        document.getElementById("game").style.display = "block";
+        authDiv.style.display = "none";
+        gameDiv.style.display = "block";
 
         document.getElementById("welcome").innerText =
             "Bienvenue " + user.email;
@@ -137,8 +140,8 @@ auth.onAuthStateChanged(async user => {
     } else {
         currentUser = null;
 
-        document.getElementById("auth").style.display = "block";
-        document.getElementById("game").style.display = "none";
+        authDiv.style.display = "block";
+        gameDiv.style.display = "none";
     }
 });
 
@@ -248,6 +251,11 @@ async function checkObjectives(data) {
 
     renderObjectives(obj);
 }
+
+const cardImg = document.getElementById("cardImg");
+const cooldown = document.getElementById("cooldown");
+const inventory = document.getElementById("inventory");
+const objectives = document.getElementById("objectives");
 
 </script>
 
