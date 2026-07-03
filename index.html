@@ -240,14 +240,20 @@ function renderInventory(inv) {
 
     inv.forEach(c => {
         const img = document.createElement("img");
-        img.src = "cards/" + c;
+
+        const path = "./cards/" + c;
+
+        img.src = path;
         img.className = "inv-card";
-        img.title = c;
+
+        img.onerror = () => {
+            console.log("Image introuvable :", path);
+            img.src = "https://via.placeholder.com/100x140?text=Missing";
+        };
 
         inventory.appendChild(img);
     });
 }
-
 // 🎯 OBJECTIFS
 async function renderObjectives(obj) {
     objectives.innerHTML = "";
