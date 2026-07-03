@@ -105,8 +105,7 @@ const cooldown = document.getElementById("cooldown");
 const inventory = document.getElementById("inventory");
 const objectives = document.getElementById("objectives");
 
-// 🔥 CONFIG FIREBASE (REMPLACE ICI)
-
+// 🔥 CONFIG FIREBASE
 const firebaseConfig = {
   apiKey: "AIzaSyDqVDKeiJCu_CY2c7hothVjF7b_FhIQAfc",
   authDomain: "gacha-game-47592.firebaseapp.com",
@@ -121,12 +120,12 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// 🎴 CARTES (tu mets tes images dans /cards)
+// 🎴 CARTES
 const cards = [
     { name: "Dragon", file: "dragon.png", rarity: "legendary" }
 ];
 
-// 🎯 OBJECTIFS MODIFIABLES FACILEMENT
+// 🎯 OBJECTIFS
 const objectivesList = [
     { id: "first_pull", text: "Faire 1 tirage" },
     { id: "collect_3", text: "Obtenir 3 cartes" }
@@ -134,34 +133,24 @@ const objectivesList = [
 
 let currentUser = null;
 
-// 🔐 REGISTER
+// 🔐 AUTH
 function register() {
-    auth.createUserWithEmailAndPassword(
-        email.value,
-        password.value
-    ).catch(alert);
+    auth.createUserWithEmailAndPassword(email.value, password.value).catch(alert);
 }
 
-// 🔐 LOGIN
 function login() {
-    auth.signInWithEmailAndPassword(
-        email.value,
-        password.value
-    ).catch(alert);
+    auth.signInWithEmailAndPassword(email.value, password.value).catch(alert);
 }
 
-// 🔐 LOGOUT
 function logout() {
     auth.signOut();
 }
 
-// 👤 USER STATE
+// 👤 STATE
 auth.onAuthStateChanged(async user => {
 
     const authDiv = document.getElementById("auth");
     const gameDiv = document.getElementById("game");
-
-    if (!authDiv || !gameDiv) return;
 
     if (user) {
         currentUser = user;
@@ -181,7 +170,7 @@ auth.onAuthStateChanged(async user => {
     }
 });
 
-// 💾 LOAD DATA
+// 💾 LOAD
 async function loadData() {
     const ref = db.collection("users").doc(currentUser.uid);
     const doc = await ref.get();
@@ -204,63 +193,45 @@ async function loadData() {
     renderObjectives(data.objectives);
     checkCooldown(data.lastPull);
 }
-// 🎲 DRAW CARD
 
-function getRarityClass(file) {
-    const card = cards.find(c => c.file === file);
-    if (!card) return "";
-
-    return card.rarity;
-}
-
+// 🎲 RANDOM CARD
 function getRandomCard() {
     const roll = Math.random() * 100;
 
-    let pool = [];
+    let pool;
 
     if (roll < 70) {
         pool = cards.filter(c => c.rarity === "common");
-    } 
-    else if (roll < 90) {
+    } else if (roll < 90) {
         pool = cards.filter(c => c.rarity === "rare");
-    } 
-    else if (roll < 98) {
+    } else if (roll < 98) {
         pool = cards.filter(c => c.rarity === "epic");
-    } 
-    else {
+    } else {
         pool = cards.filter(c => c.rarity === "legendary");
     }
 
-    // 🔥 FIX IMPORTANT
-    if (pool.length === 0) {
-        pool = cards;
-    }
+    if (!pool.length) pool = cards;
 
     return pool[Math.floor(Math.random() * pool.length)];
-    return {
-       name: pool[random].name,
-       file: pool[random].file,
-       rarity: pool[random].rarity
-    };
 }
 
+// 🎴 DRAW
 async function drawCard() {
+
     const ref = db.collection("users").doc(currentUser.uid);
     const doc = await ref.get();
     const data = doc.data();
 
     const now = Date.now();
-    const cooldown = 2 * 60 * 60 * 1000;
+    const cooldownTime = 2 * 60 * 60 * 1000;
 
-    if (now - data.lastPull < cooldown) {
+    if (now - data.lastPull < cooldownTime) {
         alert("⏳ Attends encore un peu !");
         return;
     }
 
     const card = getRandomCard();
-
-    // toujours stocker UNE STRING (le file)
-    const file = card.file ?? card;
+    const file = card.file;
 
     data.inventory = data.inventory || [];
     data.inventory.push(file);
@@ -270,19 +241,14 @@ async function drawCard() {
         lastPull: now
     });
 
-    // affichage tirage
     cardImg.src = "cards/" + file;
-
-    if (cardImg) {
-        cardImg.src = "cards/" + (card.file || card);
-    }
 
     checkObjectives(data);
     renderInventory(data.inventory);
     checkCooldown(now);
 }
 
-// ⏳ COOLDOWN DISPLAY
+// ⏳ COOLDOWN
 function checkCooldown(lastPull) {
     const now = Date.now();
     const diff = 2 * 60 * 60 * 1000 - (now - lastPull);
@@ -295,33 +261,35 @@ function checkCooldown(lastPull) {
     }
 }
 
-// 📦 INVENTAIRE
-inv.forEach(c => {
-    const file = typeof c === "string" ? c : c.file;
+// 📦 INVENTAIRE (FIX ICI)
+function renderInventory(inv) {
 
-    const img = document.createElement("img");
+    inventory.innerHTML = "";
 
-    const path = "cards/" + file;
+    inv.forEach(item => {
 
-    img.src = path;
-    img.className = "inv-card " + getRarityClass(file);
+        const file = typeof item === "object" ? item.file : item;
 
-    inventory.appendChild(img);
-});
+        const img = document.createElement("img");
+        img.src = "cards/" + file;
+        img.className = "inv-card";
 
+        inventory.appendChild(img);
+    });
+}
 
 // 🎯 OBJECTIFS
 async function renderObjectives(obj) {
+
     objectives.innerHTML = "";
 
     objectivesList.forEach(o => {
-        let li = document.createElement("li");
 
-        if (obj[o.id]) {
-            li.innerText = "✅ " + o.text;
-        } else {
-            li.innerText = "❌ " + o.text;
-        }
+        const li = document.createElement("li");
+
+        li.innerText = obj[o.id]
+            ? "✅ " + o.text
+            : "❌ " + o.text;
 
         objectives.appendChild(li);
     });
@@ -329,6 +297,7 @@ async function renderObjectives(obj) {
 
 // 🎯 CHECK OBJECTIVES
 async function checkObjectives(data) {
+
     const ref = db.collection("users").doc(currentUser.uid);
 
     let obj = data.objectives || {};
@@ -339,13 +308,10 @@ async function checkObjectives(data) {
         obj.collect_3 = true;
     }
 
-    await ref.update({
-        objectives: obj
-    });
+    await ref.update({ objectives: obj });
 
     renderObjectives(obj);
 }
-
 
 </script>
 
