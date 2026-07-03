@@ -237,6 +237,11 @@ function getRandomCard() {
     }
 
     return pool[Math.floor(Math.random() * pool.length)];
+    return {
+       name: pool[random].name,
+       file: pool[random].file,
+       rarity: pool[random].rarity
+    };
 }
 
 async function drawCard() {
@@ -254,16 +259,22 @@ async function drawCard() {
 
     const card = getRandomCard();
 
+    // toujours stocker UNE STRING (le file)
+    const file = card.file ?? card;
+
     data.inventory = data.inventory || [];
-    data.inventory.push(card.file);
+    data.inventory.push(file);
 
     await ref.update({
         inventory: data.inventory,
         lastPull: now
     });
 
+    // affichage tirage
+    cardImg.src = "cards/" + file;
+
     if (cardImg) {
-        cardImg.src = "cards/" + card.file;
+        cardImg.src = "cards/" + (card.file || card);
     }
 
     checkObjectives(data);
@@ -285,28 +296,20 @@ function checkCooldown(lastPull) {
 }
 
 // 📦 INVENTAIRE
-function renderInventory(inv) {
-    inventory.innerHTML = "";
+inv.forEach(c => {
+    const file = typeof c === "string" ? c : c.file;
 
-    inv.forEach(c => {
+    const img = document.createElement("img");
 
-        const file = typeof c === "object" ? c.file : c;
+    const path = "cards/" + file;
 
-        const img = document.createElement("img");
+    img.src = path;
+    img.className = "inv-card " + getRarityClass(file);
 
-        const path = "cards/" + file;
+    inventory.appendChild(img);
+});
 
-        img.src = path;
-        img.className = "inv-card " + getRarityClass(file);
 
-        img.onerror = () => {
-            console.log("Image introuvable :", path);
-            img.src = "https://via.placeholder.com/100x140?text=Missing";
-        };
-
-        inventory.appendChild(img);
-    });
-}
 // 🎯 OBJECTIFS
 async function renderObjectives(obj) {
     objectives.innerHTML = "";
