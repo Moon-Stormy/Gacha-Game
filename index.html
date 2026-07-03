@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Gacha Game</title>
+
+<style>
+body {
+    font-family: Arial;
+    text-align: center;
+    background: #111;
+    color: white;
+}
+
+input, button {
+    padding: 10px;
+    margin: 5px;
+}
+
+.card {
+    width: 200px;
+    margin-top: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🎴 Mon Gacha</h1>
+
+<div id="auth">
+    <h2>Login</h2>
+    <input id="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Mot de passe">
+    <br>
+    <button onclick="register()">Inscription</button>
+    <button onclick="login()">Connexion</button>
+</div>
+
+<div id="game" style="display:none;">
+
+    <h2 id="welcome"></h2>
+
+    <button onclick="drawCard()">🎲 Tirer une carte</button>
+
+    <p id="cooldown"></p>
+
+    <img id="cardImg" class="card">
+
+    <h3>🎯 Objectifs</h3>
+    <ul id="objectives"></ul>
+
+    <h3>📦 Inventaire</h3>
+    <ul id="inventory"></ul>
+
+    <button onclick="logout()">Logout</button>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+<script>
+
+// 🔥 CONFIG FIREBASE (REMPLACE ICI)
+const firebaseConfig = {
+  apiKey: "AIzaSyDqVDKeiJCu_CY2c7hothVjF7b_FhIQAfc",
+  authDomain: "gacha-game-47592.firebaseapp.com",
+  projectId: "gacha-game-47592",
+  storageBucket: "gacha-game-47592.firebasestorage.app",
+  messagingSenderId: "597224961825",
+  appId: "1:597224961825:web:38efc44b194374a3443060",
+  measurementId: "G-52PPGWQTY6"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// 🎴 CARTES (tu mets tes images dans /cards)
+const cards = [
+    "dragon.png",
+    "mage.png",
+    "chevalier.png",
+    "ange.png",
+    "demon.png"
+];
+
+// 🎯 OBJECTIFS MODIFIABLES FACILEMENT
+const objectivesList = [
+    { id: "first_pull", text: "Faire 1 tirage" },
+    { id: "collect_3", text: "Obtenir 3 cartes" }
+];
+
+let currentUser = null;
+
+// 🔐 REGISTER
+function register() {
+    auth.createUserWithEmailAndPassword(
+        email.value,
+        password.value
+    ).catch(alert);
+}
+
+// 🔐 LOGIN
+function login() {
+    auth.signInWithEmailAndPassword(
+        email.value,
+        password.value
+    ).catch(alert);
+}
+
+// 🔐 LOGOUT
+function logout() {
+    auth.signOut();
+}
+
+// 👤 USER STATE
+auth.onAuthStateChanged(async user => {
+    if (user) {
+        currentUser = user;
+        auth.style.display = "none";
+        game.style.display = "block";
+        welcome.innerText = "Bienvenue " + user.email;
+
+        loadData();
+    } else {
+        auth.style.display = "block";
+        game.style.display = "none";
+    }
+});
+
+// 💾 LOAD DATA
+async function loadData() {
+    const ref = db.collection("users").doc(currentUser.uid);
+    const doc = await ref.get();
+
+    if (!doc.exists) {
+        await ref.set({
+            inventory: [],
+            lastPull: 0,
+            objectives: {}
+        });
+    }
+
+    renderInventory(doc.data()?.inventory || []);
+    renderObjectives(doc.data()?.objectives || {});
+    checkCooldown(doc.data()?.lastPull || 0);
+}
+
+// 🎲 DRAW CARD
+async function drawCard() {
+    const ref = db.collection("users").doc(currentUser.uid);
+    const doc = await ref.get();
+    const data = doc.data();
+
+    const now = Date.now();
+    const cooldown = 2 * 60 * 60 * 1000;
+
+    if (now - data.lastPull < cooldown) {
+        alert("⏳ Attends encore un peu !");
+        return;
+    }
+
+    const card = cards[Math.floor(Math.random() * cards.length)];
+
+    data.inventory.push(card);
+
+    await ref.update({
+        inventory: data.inventory,
+        lastPull: now
+    });
+
+    cardImg.src = "cards/" + card;
+
+    checkObjectives(data);
+    renderInventory(data.inventory);
+    checkCooldown(now);
+}
+
+// ⏳ COOLDOWN DISPLAY
+function checkCooldown(lastPull) {
+    const now = Date.now();
+    const diff = 2 * 60 * 60 * 1000 - (now - lastPull);
+
+    if (diff > 0) {
+        const min = Math.floor(diff / 60000);
+        cooldown.innerText = "⏳ Prochain tirage dans " + min + " min";
+    } else {
+        cooldown.innerText = "✅ Tirage disponible";
+    }
+}
+
+// 📦 INVENTAIRE
+function renderInventory(inv) {
+    inventory.innerHTML = "";
+    inv.forEach(c => {
+        let li = document.createElement("li");
+        li.innerText = c;
+        inventory.appendChild(li);
+    });
+}
+
+// 🎯 OBJECTIFS
+async function renderObjectives(obj) {
+    objectives.innerHTML = "";
+
+    objectivesList.forEach(o => {
+        let li = document.createElement("li");
+
+        if (obj[o.id]) {
+            li.innerText = "✅ " + o.text;
+        } else {
+            li.innerText = "❌ " + o.text;
+        }
+
+        objectives.appendChild(li);
+    });
+}
+
+// 🎯 CHECK OBJECTIVES
+async function checkObjectives(data) {
+    const ref = db.collection("users").doc(currentUser.uid);
+
+    let obj = data.objectives || {};
+
+    if (!obj.first_pull) obj.first_pull = true;
+
+    if (data.inventory.length >= 3) {
+        obj.collect_3 = true;
+    }
+
+    await ref.update({
+        objectives: obj
+    });
+
+    renderObjectives(obj);
+}
+
+</script>
+
+</body>
+</html>
