@@ -63,7 +63,10 @@ input, button {
 
 <script>
 
-
+const cardImg = document.getElementById("cardImg");
+const cooldown = document.getElementById("cooldown");
+const inventory = document.getElementById("inventory");
+const objectives = document.getElementById("objectives");
 
 // 🔥 CONFIG FIREBASE (REMPLACE ICI)
 
@@ -158,11 +161,16 @@ async function loadData() {
         });
     }
 
-    renderInventory(doc.data()?.inventory || []);
-    renderObjectives(doc.data()?.objectives || {});
-    checkCooldown(doc.data()?.lastPull || 0);
-}
+    const data = doc.data() || {
+        inventory: [],
+        lastPull: 0,
+        objectives: {}
+    };
 
+    renderInventory(data.inventory);
+    renderObjectives(data.objectives);
+    checkCooldown(data.lastPull);
+}
 // 🎲 DRAW CARD
 async function drawCard() {
     const ref = db.collection("users").doc(currentUser.uid);
@@ -179,6 +187,7 @@ async function drawCard() {
 
     const card = cards[Math.floor(Math.random() * cards.length)];
 
+    data.inventory = data.inventory || [];
     data.inventory.push(card);
 
     await ref.update({
@@ -186,7 +195,9 @@ async function drawCard() {
         lastPull: now
     });
 
-    cardImg.src = "cards/" + card;
+    if (cardImg) {
+        cardImg.src = "cards/" + card;
+    }
 
     checkObjectives(data);
     renderInventory(data.inventory);
@@ -252,10 +263,6 @@ async function checkObjectives(data) {
     renderObjectives(obj);
 }
 
-const cardImg = document.getElementById("cardImg");
-const cooldown = document.getElementById("cooldown");
-const inventory = document.getElementById("inventory");
-const objectives = document.getElementById("objectives");
 
 </script>
 
