@@ -289,12 +289,15 @@ function renderInventory(inv) {
     inventory.innerHTML = "";
 
     inv.forEach(c => {
+
+        const file = typeof c === "object" ? c.file : c;
+
         const img = document.createElement("img");
 
-        const path = "cards/" + c;
+        const path = "cards/" + file;
 
         img.src = path;
-        img.className = "inv-card " + getRarityClass(c);
+        img.className = "inv-card " + getRarityClass(file);
 
         img.onerror = () => {
             console.log("Image introuvable :", path);
