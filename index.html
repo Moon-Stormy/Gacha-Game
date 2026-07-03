@@ -64,6 +64,7 @@ input, button {
 <script>
 
 // 🔥 CONFIG FIREBASE (REMPLACE ICI)
+
 const firebaseConfig = {
   apiKey: "AIzaSyDqVDKeiJCu_CY2c7hothVjF7b_FhIQAfc",
   authDomain: "gacha-game-47592.firebaseapp.com",
@@ -120,16 +121,15 @@ function logout() {
 auth.onAuthStateChanged(async user => {
     if (user) {
         currentUser = user;
-        auth.style.display = "none";
-        game.style.display = "block";
+        document.getElementById("auth").style.display = "none";
+        document.getElementById("game").style.display = "block";
         welcome.innerText = "Bienvenue " + user.email;
 
         loadData();
     } else {
-        auth.style.display = "block";
-        game.style.display = "none";
-    }
-});
+        document.getElementById("auth").style.display = "block";
+        document.getElementById("game").style.display = "none";
+}
 
 // 💾 LOAD DATA
 async function loadData() {
