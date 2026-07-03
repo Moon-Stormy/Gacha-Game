@@ -123,7 +123,7 @@ auth.onAuthStateChanged(async user => {
         currentUser = user;
         document.getElementById("auth").style.display = "none";
         document.getElementById("game").style.display = "block";
-        welcome.innerText = "Bienvenue " + user.email;
+        document.getElementById("welcome").innerText = "Bienvenue " + user.email;
 
         loadData();
     } else {
