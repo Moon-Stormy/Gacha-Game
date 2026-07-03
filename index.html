@@ -121,15 +121,21 @@ function logout() {
 auth.onAuthStateChanged(async user => {
     if (user) {
         currentUser = user;
+
         document.getElementById("auth").style.display = "none";
         document.getElementById("game").style.display = "block";
-        document.getElementById("welcome").innerText = "Bienvenue " + user.email;
+
+        document.getElementById("welcome").innerText =
+            "Bienvenue " + user.email;
 
         loadData();
     } else {
+        currentUser = null;
+
         document.getElementById("auth").style.display = "block";
         document.getElementById("game").style.display = "none";
-}
+    }
+});
 
 // 💾 LOAD DATA
 async function loadData() {
