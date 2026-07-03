@@ -231,6 +231,11 @@ function getRandomCard() {
         pool = cards.filter(c => c.rarity === "legendary");
     }
 
+    // 🔥 FIX IMPORTANT
+    if (pool.length === 0) {
+        pool = cards;
+    }
+
     return pool[Math.floor(Math.random() * pool.length)];
 }
 
@@ -250,7 +255,7 @@ async function drawCard() {
     const card = getRandomCard();
 
     data.inventory = data.inventory || [];
-    data.inventory.push(card.file);
+    data.inventory.push(card?.file || card);
 
     await ref.update({
         inventory: data.inventory,
