@@ -21,6 +21,27 @@ input, button {
     width: 200px;
     margin-top: 20px;
 }
+
+#inventory {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.inv-card {
+    width: 100px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 2px solid white;
+    transition: transform 0.2s;
+}
+
+.inv-card:hover {
+    transform: scale(1.1);
+}
+
 </style>
 </head>
 
@@ -216,10 +237,14 @@ function checkCooldown(lastPull) {
 // 📦 INVENTAIRE
 function renderInventory(inv) {
     inventory.innerHTML = "";
+
     inv.forEach(c => {
-        let li = document.createElement("li");
-        li.innerText = c;
-        inventory.appendChild(li);
+        const img = document.createElement("img");
+        img.src = "cards/" + c;
+        img.className = "inv-card";
+        img.title = c;
+
+        inventory.appendChild(img);
     });
 }
 
