@@ -255,7 +255,7 @@ async function drawCard() {
     const card = getRandomCard();
 
     data.inventory = data.inventory || [];
-    data.inventory.push(card?.file || card);
+    data.inventory.push(card.file);
 
     await ref.update({
         inventory: data.inventory,
