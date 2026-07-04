@@ -222,13 +222,13 @@ async function playRollAnimation(finalCard) {
     rollImg.style.display = "block";
     cardName.innerText = "";
 
-    const rollCount = Math.floor(Math.random() * 4) + 2; // 2 à 5 images
+    const rollCount = 70;// 70 images
 
     for (let i = 0; i < rollCount; i++) {
         const tempCard = cards[Math.floor(Math.random() * cards.length)];
         rollImg.src = "cards/" + tempCard.file;
 
-        await sleep(7000); // vitesse animation
+        await sleep(100); // vitesse animation
     }
 
     rollImg.style.display = "none";
