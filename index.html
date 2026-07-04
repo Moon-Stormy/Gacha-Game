@@ -131,7 +131,10 @@ const cards = [
 
 const objectivesList = [
     { id: "first_pull", text: "Faire 1 tirage" },
-    { id: "collect_3", text: "Obtenir 3 cartes" }
+    { id: "collect_3", text: "Obtenir 3 cartes" },
+    { id: "collect_10", text: "Obtenir 10 cartes" },
+    { id: "get_epic", text: "Obtenir une carte épique" },
+    { id: "get_legendary", text: "Obtenir une carte légendaire" }
 ];
 
 let currentUser = null;
@@ -261,7 +264,7 @@ async function drawCard() {
     } else {
     pullSound.src = "sounds/pull.mp3";
     }
-    pullSound.volume = 0.5;
+    pullSound.volume = 0.3;
     pullSound.currentTime = 0;
     pullSound.play();
 
@@ -354,10 +357,24 @@ async function checkObjectives(data) {
 
     let obj = data.objectives || {};
 
+    // 🎯 1 tirage
     if (!obj.first_pull) obj.first_pull = true;
 
-    if (data.inventory.length >= 3) {
-        obj.collect_3 = true;
+    // 📦 10 cartes
+    if (data.inventory.length >= 10) {
+        obj.collect_10 = true;
+    }
+
+    // 💜 épique
+    const hasEpic = data.inventory.some(item => item.rarity === "epic");
+    if (hasEpic) {
+        obj.get_epic = true;
+    }
+
+    // 💛 légendaire
+    const hasLegendary = data.inventory.some(item => item.rarity === "legendary");
+    if (hasLegendary) {
+        obj.get_legendary = true;
     }
 
     await ref.update({ objectives: obj });
