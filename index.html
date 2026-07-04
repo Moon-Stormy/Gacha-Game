@@ -104,6 +104,7 @@ const inventory = document.getElementById("inventory");
 const objectives = document.getElementById("objectives");
 const cardName = document.getElementById("cardName");
 const rollImg = document.getElementById("rollImg");
+const pullSound = document.getElementById("pullSound");
 
 const firebaseConfig = {
   apiKey: "AIzaSyDqVDKeiJCu_CY2c7hothVjF7b_FhIQAfc",
@@ -227,7 +228,7 @@ async function playRollAnimation(finalCard) {
         const tempCard = cards[Math.floor(Math.random() * cards.length)];
         rollImg.src = "cards/" + tempCard.file;
 
-        await sleep(400); // vitesse animation
+        await sleep(7000); // vitesse animation
     }
 
     rollImg.style.display = "none";
@@ -239,13 +240,14 @@ async function playRollAnimation(finalCard) {
 
 // 🎴 DRAW
 async function drawCard() {
+    
 
     const ref = db.collection("users").doc(currentUser.uid);
     const doc = await ref.get();
     const data = doc.data();
 
     const now = Date.now();
-    const cooldownTime = 0;
+    const cooldownTime = 0; 
 
     if (now - data.lastPull < cooldownTime) {
         alert("⏳ Attends encore un peu !");
@@ -253,6 +255,15 @@ async function drawCard() {
     }
 
     const card = getRandomCard();
+    
+    if (card.rarity === "legendary") {
+    pullSound.src = "sounds/legendary.mp3";
+    } else {
+    pullSound.src = "sounds/pull.mp3";
+    }
+
+    pullSound.currentTime = 0;
+    pullSound.play();
 
     const entry = {
         file: card.file,
@@ -275,7 +286,8 @@ async function drawCard() {
     checkCooldown(now);
 }
 
-// ⏳ COOLDOWN
+// ⏳ COOLDOWN 2 * 60 * 60 * 1000
+
 function checkCooldown(lastPull) {
     const now = Date.now();
     const diff = 2 * 60 * 60 * 1000 - (now - lastPull);
@@ -354,6 +366,6 @@ async function checkObjectives(data) {
 }
 
 </script>
-
+<audio id="pullSound" src="sounds/pull.mp3" preload="auto"></audio>
 </body>
 </html>
