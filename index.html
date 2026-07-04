@@ -68,6 +68,7 @@ input, button {
     <p id="cooldown"></p>
 
     <img id="cardImg" class="card">
+    <h3 id="cardName"></h3>
 
     <h3>🎯 Objectifs</h3>
     <ul id="objectives"></ul>
@@ -88,6 +89,8 @@ const cardImg = document.getElementById("cardImg");
 const cooldown = document.getElementById("cooldown");
 const inventory = document.getElementById("inventory");
 const objectives = document.getElementById("objectives");
+const cardName = document.getElementById("cardName");
+const rollImg = document.getElementById("rollImg");
 
 const firebaseConfig = {
   apiKey: "AIzaSyDqVDKeiJCu_CY2c7hothVjF7b_FhIQAfc",
@@ -193,6 +196,34 @@ function getRandomCard() {
     return pool[Math.floor(Math.random() * pool.length)];
 }
 
+// Animation
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function playRollAnimation(finalCard) {
+
+    cardImg.style.display = "none";
+    rollImg.style.display = "block";
+    cardName.innerText = "";
+
+    const rollCount = Math.floor(Math.random() * 4) + 2; // 2 à 5 images
+
+    for (let i = 0; i < rollCount; i++) {
+        const tempCard = cards[Math.floor(Math.random() * cards.length)];
+        rollImg.src = "cards/" + tempCard.file;
+
+        await sleep(150); // vitesse animation
+    }
+
+    rollImg.style.display = "none";
+    cardImg.style.display = "block";
+
+    cardImg.src = "cards/" + finalCard.file;
+    cardName.innerText = finalCard.name;
+}
+
 // 🎴 DRAW
 async function drawCard() {
 
@@ -223,7 +254,7 @@ async function drawCard() {
         lastPull: now
     });
 
-    cardImg.src = "cards/" + card.file;
+    await playRollAnimation(card);
 
     checkObjectives(data);
     renderInventory(data.inventory);
