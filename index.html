@@ -43,6 +43,14 @@ input, button {
 .epic { border: 2px solid purple; }
 .legendary { border: 2px solid gold; }
 
+.card {
+    width: 200px;
+    margin-top: 20px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 </style>
 </head>
 
@@ -215,7 +223,7 @@ async function playRollAnimation(finalCard) {
         const tempCard = cards[Math.floor(Math.random() * cards.length)];
         rollImg.src = "cards/" + tempCard.file;
 
-        await sleep(150); // vitesse animation
+        await sleep(400); // vitesse animation
     }
 
     rollImg.style.display = "none";
