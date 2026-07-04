@@ -5,6 +5,10 @@
 <title>Gacha Game</title>
 
 <style>
+#inventory div {
+    cursor: pointer;
+}
+
 body {
     font-family: Arial;
     text-align: center;
@@ -252,6 +256,7 @@ async function drawCard() {
 
     const entry = {
         file: card.file,
+	name: card.name,
         rarity: card.rarity
     };
 
@@ -290,17 +295,29 @@ function renderInventory(inv) {
 
     inv.forEach(item => {
 
-        const file = item.file;
-        const rarity = item.rarity;
+        const wrapper = document.createElement("div");
+        wrapper.style.display = "flex";
+        wrapper.style.flexDirection = "column";
+        wrapper.style.alignItems = "center";
+        wrapper.style.width = "100px";
 
         const img = document.createElement("img");
-        img.src = "cards/" + file;
-        img.className = "inv-card " + rarity;
+        img.src = "cards/" + item.file;
+        img.className = "inv-card " + item.rarity;
 
-        inventory.appendChild(img);
+        const name = document.createElement("div");
+        name.innerText = item.name || item.file.replace(".png", "");
+        name.style.fontSize = "12px";
+        name.style.marginTop = "5px";
+        name.style.textAlign = "center";
+        name.style.color = "white";
+
+        wrapper.appendChild(img);
+        wrapper.appendChild(name);
+
+        inventory.appendChild(wrapper);
     });
 }
-
 // 🎯 OBJECTIFS
 async function renderObjectives(obj) {
 
