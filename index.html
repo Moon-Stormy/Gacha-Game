@@ -316,7 +316,7 @@ async function drawCard() {
     const data = doc.data();
 
     const now = Date.now();
-    const cooldownTime = 0; 
+    const cooldownTime = 15 * 60 * 1000; 
 
     if (now - data.lastPull < cooldownTime) {
         alert("⏳ Attends encore un peu !");
@@ -358,14 +358,23 @@ async function drawCard() {
 // ⏳ COOLDOWN 2 * 60 * 60 * 1000
 
 function checkCooldown(lastPull) {
+
+    const cooldownTime = 15 * 60 * 1000;
     const now = Date.now();
-    const diff = 2 * 60 * 60 * 1000 - (now - lastPull);
+    const diff = cooldownTime - (now - lastPull);
 
     if (diff > 0) {
+
         const min = Math.floor(diff / 60000);
-        cooldown.innerText = "⏳ Prochain tirage dans " + min + " min";
+        const sec = Math.floor((diff % 60000) / 1000);
+
+        cooldown.innerText =
+            `⏳ Prochain tirage dans ${min} min ${sec}s`;
+
     } else {
+
         cooldown.innerText = "✅ Tirage disponible";
+
     }
 }
 
@@ -447,6 +456,19 @@ async function checkObjectives(data) {
 
     renderObjectives(obj);
 }
+
+setInterval(async () => {
+
+    if (!currentUser) return;
+
+    const doc = await db.collection("users")
+        .doc(currentUser.uid)
+        .get();
+
+    checkCooldown(doc.data().lastPull);
+
+}, 1000);
+
 
 </script>
 
