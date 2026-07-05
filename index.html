@@ -33,13 +33,23 @@ input, button {
     gap: 10px;
 }
 
+#inventory > div {
+    position: relative;
+}
+
 .inv-card {
     width: 100px;
     height: 140px;
     object-fit: cover;
     border-radius: 10px;
     border: 2px solid white;
-    transition: transform 0.2s;
+    transition: transform 0.2s ease;
+}
+
+.inv-card:hover {
+    transform: scale(3.2);
+    z-index: 1000;
+    position: relative;
 }
 
 .common { border: 2px solid gray; }
