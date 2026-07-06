@@ -340,11 +340,11 @@ async function drawCard() {
     checkCooldown(now);
 }
 
-// ⏳ COOLDOWN 2 * 60 * 60 * 1000
+// ⏳ COOLDOWN 15 * 60 * 1000
 
 function checkCooldown(lastPull) {
 
-    const cooldownTime = 15 * 60 * 1000;
+    const cooldownTime = 0;
     const now = Date.now();
     const diff = cooldownTime - (now - lastPull);
 
