@@ -7,6 +7,7 @@ const cards = [
     { name: "Tominou", file: "tominou.png", rarity: "common" },
     { name: "Nel & co", file: "nel.png", rarity: "common" },
     { name: "Positive Alizouille", file: "alizouille.png", rarity: "common" },
+    { name: "Alice gangsta", file: "alicefuck.png", rarity: "common" },
     { name: "Jul (pas le rappeur)", file: "jul.png", rarity: "common" },
 
     // Rare
