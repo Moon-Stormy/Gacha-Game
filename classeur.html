@@ -85,40 +85,36 @@ firebase.auth().onAuthStateChanged(async user => {
         return;
     }
 
-    ...
-});
+    const doc = await db.collection("users").doc(user.uid).get();
 
-const doc=await db.collection("users").doc(user.uid).get();
+    const inv = doc.data().inventory || [];
 
-const inv=doc.data().inventory||[];
+    const owned = inv.map(c => c.file);
 
-const owned=inv.map(c=>c.file);
+    const binder = document.getElementById("binder");
 
-const binder=document.getElementById("binder");
+    cards.forEach(card => {
 
-cards.forEach(card=>{
+        const div = document.createElement("div");
+        div.className = "cardBox";
 
-const div=document.createElement("div");
-div.className="cardBox";
+        const img = document.createElement("img");
+        img.src = "cards/" + card.file;
+        img.className = card.rarity;
 
-const img=document.createElement("img");
+        if (!owned.includes(card.file)) {
+            img.classList.add("missing");
+        }
 
-img.src="cards/"+card.file;
+        const txt = document.createElement("div");
+        txt.innerText = card.name;
 
-img.className=card.rarity;
+        div.appendChild(img);
+        div.appendChild(txt);
 
-if(!owned.includes(card.file))
-img.classList.add("missing");
+        binder.appendChild(div);
 
-const txt=document.createElement("div");
-txt.innerText=card.name;
-
-div.appendChild(img);
-div.appendChild(txt);
-
-binder.appendChild(div);
-
-});
+    });
 
 });
 
