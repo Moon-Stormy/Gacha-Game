@@ -1,5 +1,5 @@
 const cards = [
-    // Common
+    // Common 
     { name: "Souf", file: "souf.png", rarity: "common" },
     { name: "Ministance", file: "ministance.png", rarity: "common" },
     { name: "Cubeliott", file: "cubeliott.png", rarity: "common" },
