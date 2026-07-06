@@ -301,7 +301,7 @@ async function drawCard() {
     const data = doc.data();
 
     const now = Date.now();
-    const cooldownTime = 15 * 60 * 1000; 
+    const cooldownTime = 0; 
 
     if (now - data.lastPull < cooldownTime) {
         alert("⏳ Attends encore un peu !");
@@ -344,7 +344,7 @@ async function drawCard() {
 
 function checkCooldown(lastPull) {
 
-    const cooldownTime = 0;
+    const cooldownTime = 15 * 60 * 1000;
     const now = Date.now();
     const diff = cooldownTime - (now - lastPull);
 
