@@ -75,12 +75,17 @@ firebase.initializeApp(firebaseConfig);
 
 const db=firebase.firestore();
 
-firebase.auth().onAuthStateChanged(async user=>{
+firebase.auth().onAuthStateChanged(async user => {
 
-if(!user){
-location.href="index.html";
-return;
-}
+    console.log(user);
+
+    if (!user) {
+        location.href = "index.html";
+        return;
+    }
+
+    ...
+});
 
 const doc=await db.collection("users").doc(user.uid).get();
 
