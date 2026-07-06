@@ -142,7 +142,9 @@ input, button {
 
     <h3>🎯 Objectifs</h3>
     <ul id="objectives"></ul>
-
+    <button onclick="window.location.href='classeur.html'">
+    📖 Voir le classeur
+    </button>
     <h3>📦 Inventaire</h3>
     <ul id="inventory"></ul>
 
@@ -152,6 +154,7 @@ input, button {
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="cards.js"></script>
 
 <script>
 
@@ -176,26 +179,6 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
-
-// 🎴 CARTES AVEC RARETÉ
-const cards = [
-    { name: "Puff", file: "puff.png", rarity: "rare" },
-    { name: "Souf", file: "souf.png", rarity: "common" },
-    { name: "Le Royaume de Nelle", file: "lesenfersdenelle.png", rarity: "legendary" },
-    { name: "Ministance", file: "ministance.png", rarity: "common" },
-	{ name: "Tom le Goat du hand", file: "tomhandball.png", rarity: "legendary" },
-	{ name: "Eliott Gamer", file: "eliottgaming.png", rarity: "epic" },
-	{ name: "Dresseur Jules", file: "pokejules.png", rarity: "epic" },
-    { name: "Trésor du congélo", file: "absolutvodka.png", rarity: "rare" },
-	{ name: "Ambre au pays des bisounours", file: "amber.png", rarity: "rare" },
-	{ name: "Cubeliott", file: "cubeliott.png", rarity: "common" },
-	{ name: "Hannarabe", file: "anna.png", rarity: "common" },
-	{ name: "Tominou", file: "tominou.png", rarity: "common" },
-	{ name: "Nel & co", file: "nel.png", rarity: "common" },
-	{ name: "Positive Alizouille", file: "alizouille.png", rarity: "common" },
-	{ name: "Jul (pas le rappeur)", file: "jul.png", rarity: "common" },
-    { name: "Maxime found Gem", file: "maximegem.png", rarity: "epic" }
-];
 
 const objectivesList = [
     { id: "first_pull", text: "Faire 1 tirage" },
