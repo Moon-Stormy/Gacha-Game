@@ -20,6 +20,7 @@ const cards = [
     { name: "Eliott Gamer", file: "eliottgaming.png", rarity: "epic" },
     { name: "Dresseur Jules", file: "pokejules.png", rarity: "epic" },
     { name: "Maxime found Gem", file: "maximegem.png", rarity: "epic" },
+    { name: "Constance Subway Surfers", file: "constancesubway.png", rarity: "epic" },
 
     // Legendary
     { name: "Le Royaume de Nelle", file: "lesenfersdenelle.png", rarity: "legendary" },
