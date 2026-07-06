@@ -39,6 +39,57 @@ body{
 .epic{border:2px solid purple;}
 .legendary{border:2px solid gold;}
 
+.common-name{
+    color: lightgray;
+}
+
+.rare-name{
+    color:#4da6ff;
+    text-shadow:0 0 8px #4da6ff;
+}
+
+.epic-name{
+    color:#c05cff;
+    text-shadow:0 0 12px #c05cff;
+}
+
+.legendary-name{
+    color:#FFD700;
+    font-weight:bold;
+    text-shadow:
+        0 0 5px #FFD700,
+        0 0 10px #FFD700,
+        0 0 20px #FFEA70;
+    animation:legendaryGlow 1.8s infinite alternate;
+}
+
+@keyframes legendaryGlow{
+
+    0%{
+        color:#d4af37;
+        text-shadow:
+            0 0 5px #d4af37,
+            0 0 10px #d4af37;
+    }
+
+    50%{
+        color:#fff5a0;
+        text-shadow:
+            0 0 10px #FFD700,
+            0 0 20px #FFD700,
+            0 0 35px #fff176;
+    }
+
+    100%{
+        color:#FFD700;
+        text-shadow:
+            0 0 5px #FFD700,
+            0 0 15px #FFD700,
+            0 0 25px #fff176;
+    }
+
+}
+
 </style>
 
 </head>
@@ -107,14 +158,23 @@ firebase.auth().onAuthStateChanged(async user => {
         }
 
         const txt = document.createElement("div");
-        txt.innerText = card.name;
+
+        // Si la carte est possédée
+        if (owned.includes(card.file)) {
+            txt.innerText = card.name;
+        } else {
+            txt.innerText = "???";
+        }
+
+        // Couleur selon la rareté
+        txt.classList.add(card.rarity + "-name");
 
         div.appendChild(img);
         div.appendChild(txt);
 
         binder.appendChild(div);
 
-    });
+     });
 
 }); 
 
