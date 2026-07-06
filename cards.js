@@ -15,6 +15,7 @@ const cards = [
     { name: "Trésor du congélo", file: "absolutvodka.png", rarity: "rare" },
     { name: "Ambre au pays des bisounours", file: "amber.png", rarity: "rare" },
     { name: "Nathablurp", file: "nathablurp.png", rarity: "rare" },
+    { name: "Le self (lieu convivial)", file: "self.png", rarity: "rare" },
 
     // Epic
     { name: "Eliott Gamer", file: "eliottgaming.png", rarity: "epic" },
