@@ -15,4 +15,4 @@ const cards = [
     { name: "Positive Alizouille", file: "alizouille.png", rarity: "common" },
     { name: "Jul (pas le rappeur)", file: "jul.png", rarity: "common" },
     { name: "Maxime found Gem", file: "maximegem.png", rarity: "epic" }
-];
+]; 
